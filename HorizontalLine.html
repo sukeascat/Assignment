@@ -1,0 +1,207 @@
+<html>
+
+<head>
+    <title>title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .slider {
+        position: relative;
+        margin: 300px auto;
+        width: 1000px;
+    }
+
+    .slider .scale {
+        position: absolute;
+        left: 0;
+        top: -25px;
+        width: 1100px;
+        height: 50px;
+    }
+
+    .slider .scale .list {
+        display: flex;
+    }
+
+    .slider .scale .list .item {
+        flex: 1;
+        position: relative;
+        height: 50px;
+    }
+
+    .slider .scale .list .item:after {
+        position: absolute;
+        left: 6px;
+        top: 0;
+        width: 1px;
+        height: 100%;
+        background-color: #333;
+        content: '';
+    }
+
+    .slider .scale .list .item .title {
+        position: absolute;
+        left: -19px;
+        top: -30px;
+        width: 50px;
+        text-align: center;
+    }
+
+    .slider .prog {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 1px;
+        background-color: #333;
+    }
+
+    .slider .prog {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 101.5%;
+        height: 1px;
+        background-color: #333;
+    }
+
+    .slider .prog .dot {
+        position: absolute;
+        left: 0;
+        top: -5px;
+        width: 12px;
+        height: 12px;
+        background-color: #444;
+        border-radius: 50%;
+        cursor: pointer;
+
+    }
+
+    .slider .prog .dot:after {
+        transform: scale(2.4);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 50%;
+        content: '';
+    }
+
+    .slider .prog .bar {
+        position: absolute;
+        left: 0;
+        top: -2px;
+        height: 5px;
+        background-color: #444;
+    }
+</style>
+<script>
+    var $slider = null
+    var mousedownElement = null
+    var mousedownElementIndex = -1
+    var $sliderBar = null
+
+    var sliderOffsetLeft = 0
+    var sliderOffsetWidth = 0
+    var mousedownElementLeft = 0
+    var dotLeft = [0, 0]
+
+    document.onmousedown = function (e) {
+        sliderOffsetLeft = $slider.offsetLeft
+        sliderOffsetWidth = $slider.offsetWidth
+    }
+
+    document.onmousemove = function (e) {
+        if (!mousedownElement) return false
+
+        mousedownElementLeft = e.clientX - sliderOffsetLeft
+
+        let accuracy = mousedownElementLeft / 100
+        let parseIntAccuracy = parseInt(accuracy)
+
+        mousedownElementLeft = accuracy > parseIntAccuracy + 0.5 ? Math.ceil(accuracy) * 100 : Math.floor(
+            accuracy) * 100
+
+        if (mousedownElementLeft < 0) {
+            mousedownElementLeft = 0
+        } else if (mousedownElementLeft > sliderOffsetWidth) {
+            mousedownElementLeft = sliderOffsetWidth
+        }
+
+        dotLeft[mousedownElementIndex] = mousedownElementLeft
+
+        mousedownElement.style.left = mousedownElementLeft + "px"
+        $sliderBar.style.left = Math.min(...dotLeft) + "px"
+        $sliderBar.style.width = Math.max(...dotLeft) - Math.min(...dotLeft) + "px"
+
+        e.preventDefault()
+        e.stopPropagation()
+        return false
+    }
+
+
+    document.onmouseup = function () {
+        mousedownElement = null
+        mousedownElementIndex = -1
+    }
+
+    window.onload = function () {
+        $slider = document.getElementById("slider")
+        $sliderBar = document.getElementById("bar")
+    }
+</script>
+
+<body>
+    <div id="slider" class="slider">
+        <div class="scale">
+            <div class="list">
+                <div class="item">
+                    <div class="title">-5</div>
+                </div>
+                <div class="item">
+                    <div class="title">-4</div>
+                </div>
+                <div class="item">
+                    <div class="title">-3</div>
+                </div>
+                <div class="item">
+                    <div class="title">-2</div>
+                </div>
+                <div class="item">
+                    <div class="title">-1</div>
+                </div>
+                <div class="item">
+                    <div class="title">0</div>
+                </div>
+                <div class="item">
+                    <div class="title">1</div>
+                </div>
+                <div class="item">
+                    <div class="title">2</div>
+                </div>
+                <div class="item">
+                    <div class="title">3</div>
+                </div>
+                <div class="item">
+                    <div class="title">4</div>
+                </div>
+                <div class="item">
+                    <div class="title">5</div>
+                </div>
+            </div>
+        </div>
+        <div class="prog">
+            <div id="bar" class="bar"></div>
+            <div class="dot" onmousedown="mousedownElement = this, mousedownElementIndex = 0"></div>
+            <div class="dot" onmousedown="mousedownElement = this, mousedownElementIndex = 1"></div>
+        </div>
+    </div>
+</body>
+
+</html>
